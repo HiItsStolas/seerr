@@ -14,6 +14,7 @@ import { checkAvatarChanged } from '@server/routes/avatarproxy';
 import { ApiError } from '@server/types/error';
 import { getAppVersion } from '@server/utils/appVersion';
 import { getHostname } from '@server/utils/getHostname';
+import { isPrivateNetwork } from '@server/utils/getNetworkValidation';
 import axios from 'axios';
 import { Router } from 'express';
 import net from 'net';
@@ -260,6 +261,12 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
     return res.status(500).json({ error: 'No hostname provided.' });
   }
 
+  // Add hostname validation
+  if (settings.jellyfin.ip === '' && body.hostname) {
+    if (isPrivateNetwork(body.hostname)) {
+        throw new Error('Invalid hostname: Private IP addresses are not allowed.');
+    }
+  }
   try {
     const hostname =
       settings.jellyfin.ip !== ''
