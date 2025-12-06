@@ -14,6 +14,7 @@ import { checkAvatarChanged } from '@server/routes/avatarproxy';
 import { ApiError } from '@server/types/error';
 import { getAppVersion } from '@server/utils/appVersion';
 import { getHostname } from '@server/utils/getHostname';
+import { validateHostStrict } from '@server/utils/getNetworkValidation';
 import axios from 'axios';
 import { Router } from 'express';
 import net from 'net';
@@ -257,9 +258,14 @@ authRoutes.post('/jellyfin', async (req, res, next) => {
       .status(500)
       .json({ error: 'Jellyfin hostname already configured' });
   } else if (settings.jellyfin.ip === '' && !body.hostname) {
-    return res.status(500).json({ error: 'No hostname provided.' });
+    return res.status(500).json({ error: 'No hostname provided' });
   }
 
+  // Add hostname validation
+  if (settings.jellyfin.ip === '' && body.hostname) {
+     // This will throw an error if the hostname is dangerous
+       await validateHostStrict(body.hostname);
+  }
   try {
     const hostname =
       settings.jellyfin.ip !== ''
