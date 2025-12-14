@@ -24,6 +24,7 @@ import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import type { MultiValue } from 'react-select';
 import AsyncSelect from 'react-select/async';
+import CreatableSelect from 'react-select/creatable';
 import Datepicker from 'react-tailwindcss-datepicker-sct';
 
 const messages = defineMessages('components.Discover.FilterSlideover', {
@@ -36,6 +37,7 @@ const messages = defineMessages('components.Discover.FilterSlideover', {
   to: 'To',
   studio: 'Studio',
   genres: 'Genres',
+  releaseTags: 'Tags',
   keywords: 'Keywords',
   excludeKeywords: 'Exclude Keywords',
   originalLanguage: 'Original Language',
@@ -210,6 +212,31 @@ const FilterSlideover = ({
             onChange={(value: MultiValue<{ label: string; value: string }>) => {
               updateQueryParams(
                 'genre',
+                value?.length ? value.map((v) => v.value).join(',') : undefined
+              );
+            }}
+          />
+
+          <span className="text-lg font-semibold">
+            {intl.formatMessage(messages.releaseTags)}
+          </span>
+          <CreatableSelect
+            key={`music-tags-select-${currentFilters.releaseTags}`}
+            className="react-select-container"
+            classNamePrefix="react-select"
+            isMulti
+            placeholder={intl.formatMessage(messages.releaseTags)}
+            defaultValue={
+              currentFilters.releaseTags
+                ? currentFilters.releaseTags.split(',').map((t) => ({
+                    label: t,
+                    value: t,
+                  }))
+                : []
+            }
+            onChange={(value: MultiValue<{ label: string; value: string }>) => {
+              updateQueryParams(
+                'releaseTags',
                 value?.length ? value.map((v) => v.value).join(',') : undefined
               );
             }}

@@ -6306,6 +6306,12 @@ paths:
             example: 'Album,EP,Single'
           description: Comma-separated list of music genres/types to filter by
         - in: query
+          name: releaseTags
+          schema:
+            type: string
+            example: 'rock,metal'
+          description: Comma-separated list of tags to filter by
+        - in: query
           name: onlyWithCoverArt
           schema:
             type: string

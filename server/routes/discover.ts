@@ -872,6 +872,7 @@ discoverRoutes.get('/music', async (req, res, next) => {
     const showOnlyWithCovers = req.query.onlyWithCoverArt === 'true';
     const releaseDateGte = req.query.releaseDateGte as string | undefined;
     const releaseDateLte = req.query.releaseDateLte as string | undefined;
+    const tagFilter = req.query.releaseTags as string | undefined;
 
     const [field, direction] = sortBy.split('.');
     let apiSortField = 'release_date';
@@ -904,6 +905,19 @@ discoverRoutes.get('/music', async (req, res, next) => {
           }
 
           return genres.includes(releaseType);
+        }
+      );
+    }
+
+    if (tagFilter) {
+      const tags = tagFilter.split(',');
+      filteredReleases = freshReleasesData.payload.releases.filter(
+        (release) => {
+          if (!release.release_tags || release.release_tags.length === 0) {
+            return false;
+          }
+
+          return release.release_tags.some((tag) => tags.includes(tag));
         }
       );
     }

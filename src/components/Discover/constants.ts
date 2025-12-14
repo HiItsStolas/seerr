@@ -121,6 +121,7 @@ export const QueryFilterOptions = z.object({
   releaseDateGte: z.string().optional(),
   releaseDateLte: z.string().optional(),
   days: z.string().optional(),
+  releaseTags: z.string().optional(),
 });
 
 export type FilterOptions = z.infer<typeof QueryFilterOptions>;
@@ -242,6 +243,14 @@ export const prepareFilterValues = (
 
   if (values.releaseDateLte) {
     filterValues.releaseDateLte = values.releaseDateLte;
+  }
+
+  if (values.days) {
+    filterValues.days = values.days;
+  }
+
+  if (values.releaseTags) {
+    filterValues.releaseTags = values.releaseTags;
   }
 
   return filterValues;
